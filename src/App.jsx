@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import Navigation from './components/Navigation';
 import Dashboard from './components/Dashboard';
@@ -9,16 +9,41 @@ function App() {
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedTopic, setSelectedTopic] = useState('Traffic');
   const [selectedLevel, setSelectedLevel] = useState('Intermediate');
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+  }, []);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
 
   return (
     <div className="flex min-h-screen bg-slate-50/50 font-sans">
-      <Navigation currentView={currentView} setCurrentView={setCurrentView} />
+      <Navigation 
+        currentView={currentView} 
+        setCurrentView={setCurrentView} 
+        user={user}
+        onLogin={handleLogin}
+        onLogout={handleLogout}
+      />
       
       <main className="flex-1 md:ml-64 overflow-y-auto min-h-screen">
         <AnimatePresence mode="wait">
           {currentView === 'dashboard' && (
             <Dashboard 
               key="dashboard"
+              user={user}
               selectedTopic={selectedTopic}
               setSelectedTopic={setSelectedTopic}
               selectedLevel={selectedLevel}

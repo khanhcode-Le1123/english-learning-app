@@ -175,7 +175,9 @@ const BadgeShowcase = () => {
   );
 };
 
-export default function Dashboard({ selectedTopic, setSelectedTopic, selectedLevel, setSelectedLevel, setCurrentView }) {
+export default function Dashboard({ user, selectedTopic, setSelectedTopic, selectedLevel, setSelectedLevel, setCurrentView }) {
+  const userName = user ? user.name : 'Learner';
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -203,10 +205,10 @@ export default function Dashboard({ selectedTopic, setSelectedTopic, selectedLev
             <div className="relative z-10 max-w-lg">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/60 backdrop-blur-md rounded-full text-vibrant-blue font-bold text-xs mb-4 shadow-sm border border-white/50">
                 <Sparkles size={14} />
-                <span>Welcome back, Learner!</span>
+                <span>Welcome back, {userName}!</span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-6 leading-tight">
-                Ready to Level Up Your <br/> English Journey, Khanh?
+                Ready to Level Up Your <br/> English Journey, {userName}?
               </h1>
               <button 
                 onClick={() => setCurrentView('learn')}
