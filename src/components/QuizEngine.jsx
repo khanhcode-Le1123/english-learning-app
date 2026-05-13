@@ -12,7 +12,7 @@ export default function QuizEngine({ selectedTopic, selectedLevel }) {
 
   useEffect(() => {
     // Generate questions
-    const pool = wordData.filter(w => w.topic === selectedTopic && w.level === selectedLevel);
+    const pool = wordData.filter(w => w.topic === selectedTopic);
     const generated = pool.map(word => {
       // Get 3 random wrong answers
       const wrongAnswers = wordData
@@ -31,7 +31,7 @@ export default function QuizEngine({ selectedTopic, selectedLevel }) {
     });
     
     setQuestions(generated);
-  }, [selectedTopic, selectedLevel]);
+  }, [selectedTopic]);
 
   const handleSelect = (option) => {
     if (selectedAnswer) return; // Prevent multiple clicks
@@ -104,16 +104,17 @@ export default function QuizEngine({ selectedTopic, selectedLevel }) {
       className="max-w-2xl mx-auto py-12 px-4 flex flex-col min-h-[80vh]"
     >
       <div className="flex justify-between items-center mb-12">
-        <h2 className="text-2xl font-bold text-slate-800">Quiz <span className="text-slate-400 font-medium">({selectedTopic})</span></h2>
+        <h2 className="text-2xl font-bold text-slate-800">Multiple Choice <span className="text-slate-400 font-medium">({selectedTopic})</span></h2>
         <span className="bg-slate-100 text-slate-600 px-4 py-1.5 rounded-full font-bold">
           {currentIndex + 1} / {questions.length}
         </span>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] p-10 shadow-soft border-2 border-slate-100 mb-8 text-center relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-soft-blue rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        <span className="text-xl font-bold text-slate-400 mb-2 block">{currentQuestion.type}</span>
-        <h3 className="text-5xl font-extrabold text-slate-800 mb-4 relative z-10">{currentQuestion.word}</h3>
+      <div className="bg-gradient-to-br from-white via-teal-50/30 to-emerald-50/20 rounded-[2.5rem] p-10 shadow-soft border-2 border-slate-100 mb-8 text-center relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-teal-100 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 opacity-60"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-100 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 opacity-40"></div>
+        <span className="text-xl font-bold mb-2 block"><span className="px-4 py-1.5 bg-teal-50 text-teal-600 rounded-xl border border-teal-100">{currentQuestion.type}</span></span>
+        <h3 className="text-5xl font-extrabold text-slate-700 mb-4 relative z-10 mt-4">{currentQuestion.word}</h3>
         <p className="text-slate-500 font-medium">What is the correct meaning?</p>
       </div>
 

@@ -3,27 +3,42 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
 import { wordData } from '../data/WordData';
 
-export default function Flashcard({ selectedTopic, selectedLevel }) {
+export default function Flashcard({ selectedTopic, selectedLevel, onWordLearned }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [filteredWords, setFilteredWords] = useState([]);
+  const [maxReachedIndex, setMaxReachedIndex] = useState(0);
 
   useEffect(() => {
+    const levelOrder = { 'Beginner': 0, 'Intermediate': 1, 'Advanced': 2 };
     const rawWords = wordData.filter(
-      (w) => w.topic === selectedTopic && w.level === selectedLevel
+      (w) => w.topic === selectedTopic
     );
-    // Shuffle words randomly
-    setFilteredWords([...rawWords].sort(() => Math.random() - 0.5));
+    // Sort by level order: Beginner → Intermediate → Advanced
+    rawWords.sort((a, b) => (levelOrder[a.level] || 0) - (levelOrder[b.level] || 0));
+    setFilteredWords(rawWords);
     setCurrentIndex(0);
     setIsFlipped(false);
-  }, [selectedTopic, selectedLevel]);
+    setMaxReachedIndex(0);
+  }, [selectedTopic]);
 
   const word = filteredWords[currentIndex];
 
   const handleNext = () => {
     if (currentIndex < filteredWords.length - 1) {
+      const nextIndex = currentIndex + 1;
       setIsFlipped(false);
-      setTimeout(() => setCurrentIndex(c => c + 1), 150);
+      setTimeout(() => {
+        setCurrentIndex(nextIndex);
+        // Only count as learned if this is a new card the user hasn't reached before
+        if (nextIndex > maxReachedIndex) {
+          setMaxReachedIndex(nextIndex);
+          const nextWord = filteredWords[nextIndex];
+          if (nextWord && onWordLearned) {
+            onWordLearned(nextWord.word + '_' + nextWord.topic + '_' + nextWord.level);
+          }
+        }
+      }, 150);
     }
   };
 
@@ -50,7 +65,7 @@ export default function Flashcard({ selectedTopic, selectedLevel }) {
       className="max-w-2xl mx-auto py-12 px-4 flex flex-col items-center justify-center min-h-[80vh]"
     >
       <div className="w-full flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-slate-800">{selectedTopic} <span className="text-slate-400 font-medium">({selectedLevel})</span></h2>
+        <h2 className="text-2xl font-bold text-slate-800">{selectedTopic} <span className="text-slate-400 font-medium">({word.level})</span></h2>
         <span className="bg-slate-100 text-slate-600 px-4 py-1.5 rounded-full font-bold">
           {currentIndex + 1} / {filteredWords.length}
         </span>
@@ -62,7 +77,7 @@ export default function Flashcard({ selectedTopic, selectedLevel }) {
           animate={{ rotateY: isFlipped ? 180 : 0 }}
         >
           {/* Front */}
-          <div className="absolute inset-0 bg-white border-2 border-slate-100 rounded-[2.5rem] shadow-soft backface-hidden flex flex-col items-center justify-center p-10">
+          <div className="absolute inset-0 bg-gradient-to-br from-white via-soft-blue/20 to-mint-green/20 border-2 border-slate-100 rounded-[2.5rem] shadow-soft backface-hidden flex flex-col items-center justify-center p-10">
             <button 
               className="absolute top-6 right-6 p-3 bg-slate-50 text-slate-400 hover:text-vibrant-blue hover:bg-soft-blue rounded-2xl transition-colors"
               onClick={(e) => { e.stopPropagation(); /* Play sound logic */ }}
@@ -70,10 +85,10 @@ export default function Flashcard({ selectedTopic, selectedLevel }) {
               <Volume2 size={24} />
             </button>
             <div className="absolute top-8 left-8">
-              <span className="px-4 py-2 bg-slate-100 text-slate-500 font-bold rounded-xl">{word.type}</span>
+              <span className="px-4 py-2 bg-teal-50 text-teal-600 font-bold rounded-xl border border-teal-100">{word.type}</span>
             </div>
             
-            <h3 className="text-5xl sm:text-7xl font-extrabold text-slate-800 mb-6 text-center tracking-tight">{word.word}</h3>
+            <h3 className="text-5xl sm:text-7xl font-extrabold text-slate-700 mb-6 text-center tracking-tight">{word.word}</h3>
             
             {word.ipa && (
               <div className="bg-soft-blue/50 text-vibrant-blue px-6 py-2 rounded-full font-medium text-xl tracking-wider shadow-sm">

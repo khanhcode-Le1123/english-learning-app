@@ -91,40 +91,7 @@ const DailyActivity = () => {
   );
 };
 
-const WeeklyProgress = () => {
-  const data = [65, 35, 60, 50, 70, 45, 75];
-  const days = ['Sun', 'Mo', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  
-  return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-50 mb-8">
-      <h3 className="font-bold text-slate-800 text-lg mb-6">Weekly Progress</h3>
-      <div className="relative h-40 flex items-end justify-between gap-2">
-        {/* Y Axis labels */}
-        <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-slate-400 pb-6">
-          <span>80</span>
-          <span>60</span>
-          <span>40</span>
-          <span>20</span>
-          <span>0</span>
-        </div>
-        
-        {/* Bars */}
-        <div className="w-full flex justify-between items-end h-full pl-6 pb-6">
-          {data.map((val, idx) => (
-            <div key={idx} className="w-[10%] bg-mint-green rounded-t-md" style={{ height: `${val}%` }}></div>
-          ))}
-        </div>
-        
-        {/* X Axis labels */}
-        <div className="absolute bottom-0 left-6 right-0 flex justify-between text-xs text-slate-400 font-medium">
-          {days.map((day, idx) => (
-             <span key={idx} className="w-[10%] text-center">{day}</span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
+
 
 const QuizCorner = () => {
   return (
@@ -158,24 +125,36 @@ const BadgeShowcase = () => {
         <span className="text-vibrant-blue text-xs font-bold cursor-pointer">View All</span>
       </div>
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-50 flex justify-between">
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 bg-gradient-to-br from-yellow-300 to-orange-400 rounded-full flex items-center justify-center shadow-md border-4 border-white text-2xl">🔥</div>
-          <span className="text-xs font-bold text-slate-600">7 Days</span>
+        {/* Người mới - Đã đạt được */}
+        <div className="flex flex-col items-center gap-2 relative">
+          <div className="w-14 h-14 bg-gradient-to-br from-green-300 to-emerald-500 rounded-full flex items-center justify-center shadow-md border-4 border-white text-2xl">⭐</div>
+          <div className="absolute -top-1 -right-1 w-5 h-5 bg-vibrant-green rounded-full flex items-center justify-center shadow-sm border-2 border-white">
+            <span className="text-white text-[10px] font-bold">✓</span>
+          </div>
+          <span className="text-xs font-bold text-slate-600">Newcomer</span>
         </div>
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 bg-gradient-to-br from-blue-300 to-indigo-400 rounded-full flex items-center justify-center shadow-md border-4 border-white text-2xl">📚</div>
-          <span className="text-xs font-bold text-slate-600">Scholar</span>
+        {/* Scholar - Chưa đạt được */}
+        <div className="flex flex-col items-center gap-2 relative opacity-50">
+          <div className="w-14 h-14 bg-gradient-to-br from-slate-200 to-slate-300 rounded-full flex items-center justify-center shadow-sm border-4 border-white text-2xl grayscale">📚</div>
+          <div className="absolute -top-1 -right-1 w-5 h-5 bg-slate-400 rounded-full flex items-center justify-center shadow-sm border-2 border-white">
+            <span className="text-white text-[10px]">🔒</span>
+          </div>
+          <span className="text-xs font-bold text-slate-400">Scholar</span>
         </div>
-        <div className="flex flex-col items-center gap-2">
-          <div className="w-14 h-14 bg-gradient-to-br from-green-300 to-emerald-400 rounded-full flex items-center justify-center shadow-md border-4 border-white text-2xl">🏆</div>
-          <span className="text-xs font-bold text-slate-600">Champion</span>
+        {/* Champion - Chưa đạt được */}
+        <div className="flex flex-col items-center gap-2 relative opacity-50">
+          <div className="w-14 h-14 bg-gradient-to-br from-slate-200 to-slate-300 rounded-full flex items-center justify-center shadow-sm border-4 border-white text-2xl grayscale">🏆</div>
+          <div className="absolute -top-1 -right-1 w-5 h-5 bg-slate-400 rounded-full flex items-center justify-center shadow-sm border-2 border-white">
+            <span className="text-white text-[10px]">🔒</span>
+          </div>
+          <span className="text-xs font-bold text-slate-400">Champion</span>
         </div>
       </div>
     </div>
   );
 };
 
-export default function Dashboard({ user, selectedTopic, setSelectedTopic, selectedLevel, setSelectedLevel, setCurrentView }) {
+export default function Dashboard({ user, selectedTopic, setSelectedTopic, selectedLevel, setSelectedLevel, setCurrentView, learnedWordIds }) {
   const userName = user ? user.name : 'Learner';
   
   return (
@@ -226,13 +205,14 @@ export default function Dashboard({ user, selectedTopic, setSelectedTopic, selec
             selectedLevel={selectedLevel}
             setSelectedLevel={setSelectedLevel}
             setCurrentView={setCurrentView}
+            learnedWordIds={learnedWordIds}
           />
         </div>
 
         {/* Right Column (Widgets) */}
         <div className="xl:col-span-1 pl-0 xl:pl-6 xl:border-l xl:border-slate-100 flex flex-col">
            <DailyActivity />
-           <WeeklyProgress />
+
            <BadgeShowcase />
            <QuizCorner />
         </div>

@@ -1,26 +1,23 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mail, Lock, User, Sparkles } from 'lucide-react';
+import { X, User, Calendar, Users, Sparkles } from 'lucide-react';
 
 export default function AuthModal({ isOpen, onClose, onLogin, hideClose }) {
-  const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [formData, setFormData] = useState({ name: '', age: '', gender: '' });
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.email || !formData.password || (!isLogin && !formData.name)) {
+    if (!formData.name || !formData.age || !formData.gender) {
       alert("Please fill in all fields");
       return;
     }
 
-    // Mock Login / Register
-    const userName = isLogin ? formData.email.split('@')[0] : formData.name;
     const userData = {
-      name: userName || 'Learner',
-      email: formData.email,
-      avatar: `https://api.dicebear.com/7.x/notionists/svg?seed=${formData.email}`
+      name: formData.name,
+      age: formData.age,
+      gender: formData.gender,
     };
 
     onLogin(userData);
@@ -65,73 +62,69 @@ export default function AuthModal({ isOpen, onClose, onLogin, hideClose }) {
             </div>
             
             <h2 className="text-3xl font-extrabold text-slate-800 mb-2">
-              {isLogin ? 'Welcome Back!' : 'Create Account'}
+              Welcome!
             </h2>
             <p className="text-slate-500 font-medium mb-8">
-              {isLogin ? 'Sign in to track your learning progress.' : 'Join us and start your English journey today!'}
+              Tell us about yourself to get started.
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                    <User size={20} />
-                  </div>
-                  <input 
-                    type="text" 
-                    placeholder="Full Name" 
-                    value={formData.name}
-                    onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-vibrant-blue/20 focus:border-vibrant-blue transition-all font-medium"
-                  />
-                </div>
-              )}
-
+              {/* Name */}
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                  <Mail size={20} />
+                  <User size={20} />
                 </div>
                 <input 
-                  type="email" 
-                  placeholder="Email Address" 
-                  value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  type="text" 
+                  placeholder="Your Name" 
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
                   className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-vibrant-blue/20 focus:border-vibrant-blue transition-all font-medium"
                 />
               </div>
 
+              {/* Age */}
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                  <Lock size={20} />
+                  <Calendar size={20} />
                 </div>
                 <input 
-                  type="password" 
-                  placeholder="Password" 
-                  value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  type="number" 
+                  placeholder="Your Age" 
+                  min="1"
+                  max="120"
+                  value={formData.age}
+                  onChange={(e) => setFormData({...formData, age: e.target.value})}
                   className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 text-slate-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-vibrant-blue/20 focus:border-vibrant-blue transition-all font-medium"
                 />
+              </div>
+
+              {/* Gender - Select only */}
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                  <Users size={20} />
+                </div>
+                <select
+                  value={formData.gender}
+                  onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                  className={`w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-vibrant-blue/20 focus:border-vibrant-blue transition-all font-medium appearance-none cursor-pointer ${formData.gender ? 'text-slate-800' : 'text-slate-400'}`}
+                >
+                  <option value="" disabled>Select Gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400">
+                  <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
               </div>
 
               <button 
                 type="submit"
                 className="w-full bg-slate-800 text-white font-bold py-4 rounded-2xl shadow-hover hover:bg-slate-700 transition-colors mt-2"
               >
-                {isLogin ? 'Sign In' : 'Create Account'}
+                Get Started
               </button>
             </form>
-
-            <div className="mt-8 text-center">
-              <p className="text-slate-500 font-medium">
-                {isLogin ? "Don't have an account?" : "Already have an account?"}
-                <button 
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="ml-2 text-vibrant-blue font-bold hover:underline"
-                >
-                  {isLogin ? 'Sign up' : 'Log in'}
-                </button>
-              </p>
-            </div>
           </div>
         </motion.div>
       </div>
