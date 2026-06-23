@@ -27,10 +27,9 @@ export default function Flashcard({ selectedTopic, selectedLevel, onWordLearned 
   const handleNext = () => {
     if (currentIndex < filteredWords.length - 1) {
       const nextIndex = currentIndex + 1;
-      setIsFlipped(false);
-      setTimeout(() => {
+      
+      const updateWord = () => {
         setCurrentIndex(nextIndex);
-        // Only count as learned if this is a new card the user hasn't reached before
         if (nextIndex > maxReachedIndex) {
           setMaxReachedIndex(nextIndex);
           const nextWord = filteredWords[nextIndex];
@@ -38,14 +37,31 @@ export default function Flashcard({ selectedTopic, selectedLevel, onWordLearned 
             onWordLearned(nextWord.word + '_' + nextWord.topic + '_' + nextWord.level);
           }
         }
-      }, 150);
+      };
+
+      if (isFlipped) {
+        setIsFlipped(false);
+        setTimeout(updateWord, 400);
+      } else {
+        updateWord();
+      }
     }
   };
 
   const handlePrev = () => {
     if (currentIndex > 0) {
-      setIsFlipped(false);
-      setTimeout(() => setCurrentIndex(c => c - 1), 150);
+      const prevIndex = currentIndex - 1;
+      
+      const updateWord = () => {
+        setCurrentIndex(prevIndex);
+      };
+
+      if (isFlipped) {
+        setIsFlipped(false);
+        setTimeout(updateWord, 400);
+      } else {
+        updateWord();
+      }
     }
   };
 
@@ -73,8 +89,9 @@ export default function Flashcard({ selectedTopic, selectedLevel, onWordLearned 
 
       <div className="relative w-full aspect-[4/3] max-h-[400px] perspective-1000 cursor-pointer" onClick={() => setIsFlipped(!isFlipped)}>
         <motion.div
-          className="w-full h-full relative transform-style-3d transition-all duration-700"
+          className="w-full h-full relative transform-style-3d"
           animate={{ rotateY: isFlipped ? 180 : 0 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
         >
           {/* Front */}
           <div className="absolute inset-0 bg-gradient-to-br from-white via-soft-blue/20 to-mint-green/20 border-2 border-slate-100 rounded-[2.5rem] shadow-soft backface-hidden flex flex-col items-center justify-center p-10">
